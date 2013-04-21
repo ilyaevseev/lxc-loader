@@ -1,0 +1,48 @@
+
+====  Conventions  ========
+
+1) No bridge, ProxyARP on host.
+2) No DHCP, static IP in container.
+3) The same suffix number is used for vethXXX, MAC and IP.
+
+====  Install LXC  ========
+
+apt-get --no-install-recommends lxc cgroup-lite
+service lxc stop
+sed -ie ’s,USE_LXC_BRIDGE=”true”,USE_LXC_BRIDGE=”false”,’ /etc/default/lxc
+service lxc start
+
+====  Boot system  ========
+
+EXT_IFACE="$(ip route get 8.8.8.8 | grep ' dev ' | sed -e 's,.* dev ,,' -e 's, .*,,')"
+
+sysctl "net.ipv4.ip_forward=1"
+sysctl "net.ipv4.conf.$EXT_IFACE.proxy_arp=1"
+
+====  Create container  ========
+
+lxc-create -n $NAME -t ubuntu -- -a i386 -r precise
+
+Edit /var/lib/lxc/$NAME/config:
+lxc.network.type = veth
+lxc.network.flags = up
+lxc.network.veth.pair = vethXXX
+lxc.network.name = eth0
+lxc.network.hwaddr = 00:16:3e:xx:xx:XX
+
+Edit /var/lib/lxc/$NAME/rootfs/etc/network/interfaces:
+iface eth0 inet static
+        address x.x.x.XX
+        gateway x.x.x.1
+        netmask 255.255.255.0
+        dns-nameservers x.x.x.2 x.x.x.3
+
+====  Start container  ========
+
+lxc-start -n $NAME -c /var/lib/lxc/$NAME/console.log -l /var/lib/lxc/$NAME/lxc.log -d
+lxc-ifup vethXXX x.x.x.1
+
+lxc-console -n $NAME
+..default login = ubuntu, password = ubuntu, disconnect = Ctrl+a,d
+
+== END ==

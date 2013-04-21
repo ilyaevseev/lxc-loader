@@ -1,0 +1,41 @@
+#!/bin/sh
+
+iface="$1"
+ipaddr="$2"
+
+Die() { echo "lxc-ifup: ${iface}: Error: $*"; exit 1; }
+
+test -n "$iface" || Die "missing interface name.";
+
+for a in $ipaddr; do
+	me="$(ip route get "$a"      | grep -- ' src '      | head -1 | sed -e 's,.* src ,,' -e 's, .*,,')"
+	test -n "$me" || Die "cannot detect IP for using as router."
+
+	dv="$(ip route get "$a"      | grep -- ' dev '      | head -1 | sed -e 's,.* dev ,,' -e 's, .*,,')"
+	test -n "$dv" || Die "cannot detect base interface."
+
+	mm="$(ip addr list dev "$dv" | grep -- " inet $me/" | head -1 | sed -e 's,.*/,,' -e 's, .*,,')"
+	test -n "$mm" || Die "cannot detect netmask."
+
+	if arping -I "$dv" -qc3 "$ipaddr"; then
+		a="$(ip neighbor show to "$ipaddr" dev "$dv")"
+		Die "$ipaddr seems already available on $dv as $a."
+	fi
+
+	sysctl "net.ipv4.conf.$iface.proxy_arp=1" > /dev/null
+
+	ip link set "$iface" up
+	ip addr add "$me/$mm" dev "$iface"
+
+	# Remove route automatically added by previous command..
+	ip route list proto kernel scope link dev "$iface" \
+	| while read dest unused; do
+		ip route delete "$dest" dev "$iface"
+	done
+
+	ip route add "$a/32" dev "$iface" src "$me"
+
+	logger -s "lxc-ifup: $iface: ip=$a, me=$me/$mm, basedev=$dv."
+done
+
+## EOF ##

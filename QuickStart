@@ -39,9 +39,7 @@ iface eth0 inet static
 
 ====  Start container  ========
 
-lxc-start -n $NAME -c /var/lib/lxc/$NAME/console.log -l /var/lib/lxc/$NAME/lxc.log -d
-lxc-ifup vethXXX x.x.x.1
-
+lxc-start1 $NAME
 lxc-console -n $NAME
 ..default login = ubuntu, password = ubuntu, disconnect = Ctrl+a,q
 

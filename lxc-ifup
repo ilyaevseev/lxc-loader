@@ -1,9 +1,26 @@
 #!/bin/sh
 
-iface="$1"
-ipaddr="$2"
-
 Die() { echo "lxc-ifup: ${iface}: Error: $*"; exit 1; }
+
+if test $# = 2; then
+	iface="$1"
+	ipaddr="$2"
+elif test $# = 1; then
+	topdir="/var/lib/lxc/$1"
+	debnet="$topdir/rootfs/etc/network/interfaces"
+	config="$topdir/config"
+	test -f "$config" || Die "$config does not exist."
+
+	 iface="$(grep ^lxc.network.veth.pair $config | sed -e 's,.*= *,,')"
+	ipaddr="$(grep ^lxc.network.ipv4      $config | sed -e 's,.*= *,,')"
+	test -z "$ipaddr" && ipaddr="$(grep -w address $debnet | sed -e 's,.*[^0-9.],,')"
+	test -z "$ipaddr" && Die "cannot detect container IP."
+	#echo "DEBUG: iface=$iface, ipaddr=$ipaddr"; exit
+else
+	echo "Usage: $0 vethXXX <container-ipaddr>"
+	echo "Usage: $0 <container-name>"
+	exit 1
+fi
 
 test -n "$iface" || Die "missing interface name.";
 

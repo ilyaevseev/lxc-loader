@@ -9,8 +9,11 @@ d="/var/lib/lxc/$NAME"
 c="$d/config"
 test -f "$c" || { echo "ERROR: $c does not exist."; exit 1; }
 
+lxc-info -n "$NAME" 2>/dev/null | grep -qw "RUNNING" && { echo "Error: $NAME seems already running!"; exit 1; }
 echo "Try to start $NAME..."
 lxc-start -n "$NAME" -c "$d/console.log" -o "$d/lxc.log" -d
+sleep 1
+lxc-info -n "$NAME" | grep -qw "RUNNING" || { echo "ERROR: cannot start $NAME, check $d/*.log"; exit 1; }
 
 echo "Try to setup route..."
 d0=`dirname $0`

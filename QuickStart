@@ -11,13 +11,13 @@ apt-get --no-install-recommends lxc cgroup-lite
 service lxc stop
 sed -ie ’s,USE_LXC_BRIDGE=”true”,USE_LXC_BRIDGE=”false”,’ /etc/default/lxc
 service lxc start
+cd /etc && hg clone http://code.google.com/p/lxc-loader/
 
 ====  Boot system  ========
 
-EXT_IFACE="$(ip route get 8.8.8.8 | grep ' dev ' | sed -e 's,.* dev ,,' -e 's, .*,,')"
+Add to /etc/rc.local:
 
-sysctl "net.ipv4.ip_forward=1"
-sysctl "net.ipv4.conf.$EXT_IFACE.proxy_arp=1"
+/etc/lxc-loader/lxc-onboot [names of containers...] &
 
 ====  Create container  ========
 
@@ -39,7 +39,7 @@ iface eth0 inet static
 
 ====  Start container  ========
 
-lxc-start1 $NAME
+/etc/lxc-loader/lxc-start1 $NAME
 lxc-console -n $NAME
 ..default login = ubuntu, password = ubuntu, disconnect = Ctrl+a,q
 

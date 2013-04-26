@@ -1,0 +1,11 @@
+#!/bin/sh
+
+EXT_IFACE="$(ip route get 8.8.8.8 | grep ' dev ' | sed -e 's,.* dev ,,' -e 's, .*,,')"
+
+test -n "$EXT_IFACE" && sysctl "net.ipv4.conf.$EXT_IFACE.proxy_arp=1"
+sysctl "net.ipv4.ip_forward=1"
+
+d0=`dirname $0`
+for n in "$@"; do $d0/lxc-start1 "$n"; sleep 15; done
+
+## EOF ##

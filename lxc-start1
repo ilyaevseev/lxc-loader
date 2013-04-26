@@ -2,8 +2,9 @@
 
 # simple wrapper for lxc-start
 
+test "$1" = "-n" && shift
 NAME="$1"
-test -n "$NAME" || { echo "Usage: $0 <name>"; exit 1; }
+test -n "$NAME" || { echo "Usage: $0 [-n] <name>"; exit 1; }
 
 d="/var/lib/lxc/$NAME"
 c="$d/config"

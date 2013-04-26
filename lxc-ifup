@@ -40,6 +40,7 @@ for a in $ipaddr; do
 	fi
 
 	sysctl "net.ipv4.conf.$iface.proxy_arp=1" > /dev/null
+	sysctl "net.ipv4.conf.$dv.proxy_arp=1"    > /dev/null
 
 	ip link set "$iface" up
 	ip addr add "$me/$mm" dev "$iface"

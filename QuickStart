@@ -4,12 +4,13 @@
 1) No bridge, ProxyARP on host.
 2) No DHCP, static IP in container.
 3) The same suffix number is used for vethXXX, MAC and IP.
+4) Host and guest OS is Ubuntu 12.04 (more choices on wiki)
 
 ====  Install LXC  ========
 
-apt-get --no-install-recommends lxc cgroup-lite
+apt-get --no-install-recommends lxc cgroup-lite debootstrap
 service lxc stop
-sed -ie ’s,USE_LXC_BRIDGE=”true”,USE_LXC_BRIDGE=”false”,’ /etc/default/lxc
+sed -ie 's,USE_LXC_BRIDGE="true",USE_LXC_BRIDGE="false",' /etc/default/lxc
 service lxc start
 cd /etc && hg clone http://code.google.com/p/lxc-loader/
 

@@ -13,7 +13,7 @@ elif test $# = 1; then
 
 	 iface="$(grep ^lxc.network.veth.pair $config | sed -e 's,.*= *,,')"
 	ipaddr="$(grep ^lxc.network.ipv4      $config | sed -e 's,.*= *,,')"
-	test -z "$ipaddr" && ipaddr="$(grep -w address $debnet | sed -e 's,.*[^0-9.],,')"
+	test -z "$ipaddr" && ipaddr="$(grep -w address $debnet | sed -e 's,.*[^0-9.],,' | tail -1)"
 	test -z "$ipaddr" && Die "cannot detect container IP."
 	#echo "DEBUG: iface=$iface, ipaddr=$ipaddr"; exit
 else

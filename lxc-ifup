@@ -8,12 +8,14 @@ if test $# = 2; then
 elif test $# = 1; then
 	topdir="/var/lib/lxc/$1"
 	debnet="$topdir/rootfs/etc/network/interfaces"
+	rhlnet="$topdir/rootfs/etc/sysconfig/network-scripts/ifcfg-eth0"
 	config="$topdir/config"
 	test -f "$config" || Die "$config does not exist."
 
 	 iface="$(grep ^lxc.network.veth.pair $config | sed -e 's,.*= *,,')"
 	ipaddr="$(grep ^lxc.network.ipv4      $config | sed -e 's,.*= *,,')"
-	test -z "$ipaddr" && ipaddr="$(grep -w address $debnet | sed -e 's,.*[^0-9.],,' | tail -1)"
+	test -z "$ipaddr" && test -s "$debnet" && ipaddr="$(awk  '/ *address */ {print $2; exit;}' $debnet)"
+	test -z "$ipaddr" && test -s "$rhlnet" && ipaddr="$(awk -F= '/^IPADDR=/ {print $2; exit;}' $rhlnet)"
 	test -z "$ipaddr" && Die "cannot detect container IP."
 	#echo "DEBUG: iface=$iface, ipaddr=$ipaddr"; exit
 else

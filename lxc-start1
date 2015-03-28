@@ -13,7 +13,11 @@ test -f "$c" || { echo "ERROR: $c does not exist."; exit 1; }
 lxc-info -n "$NAME" 2>/dev/null | grep -qw "RUNNING" && { echo "Error: $NAME seems already running!"; exit 1; }
 echo "Try to start $NAME..."
 lxc-start -n "$NAME" -c "$d/console.log" -o "$d/lxc.log" -d
-sleep 2
+
+for n in 1 2 3 4 5; do
+    sleep 1
+    lxc-info -n "$NAME" | grep -qw "RUNNING" && break
+done
 lxc-info -n "$NAME" | grep -qw "RUNNING" || { echo "ERROR: cannot start $NAME, check $d/*.log"; exit 1; }
 
 echo "Try to setup route..."

@@ -11,7 +11,16 @@
 ```
 apt-get --no-install-recommends install lxc debootstrap cgroup-lite
 service lxc stop
-sed -ie 's,USE_LXC_BRIDGE="true",USE_LXC_BRIDGE="false",' /etc/default/lxc
+sed -i.orig -e 's,USE_LXC_BRIDGE="true",USE_LXC_BRIDGE="false",' /etc/default/lxc
+service lxc start
+```
+
+**Ubuntu 14.04 (Trusty Tahr):**
+
+```
+apt-get --no-install-recommends install lxc debootstrap cgroup-lite lxc-templates
+service lxc stop
+sed -i.orig -e 's,USE_LXC_BRIDGE="true",USE_LXC_BRIDGE="false",' /etc/default/lxc-net
 service lxc start
 ```
 

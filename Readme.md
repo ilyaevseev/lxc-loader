@@ -49,7 +49,7 @@ service cgconfig start
 
 ```
 apt-get install --no-install-recommends mercurial
-cd /etc && hg clone http://code.google.com/p/lxc-loader/
+cd /etc && hg clone https://bitbucket.org/evseev/lxc-loader
 ```
 
 # On boot

@@ -4,12 +4,12 @@
   * No DHCP, static IP in container.
   * Its recommended to use the same suffix for vethXXX, MAC and IP.
 
-# Install LXC
+# Install LXC and required packages
 
 **Ubuntu 12.04 (Precise Pangolin):**
 
 ```
-apt-get --no-install-recommends install lxc debootstrap cgroup-lite
+apt-get --no-install-recommends install lxc debootstrap cgroup-lite arping mercurial
 service lxc stop
 sed -i.orig -e 's,USE_LXC_BRIDGE="true",USE_LXC_BRIDGE="false",' /etc/default/lxc
 service lxc start
@@ -18,7 +18,7 @@ service lxc start
 **Ubuntu 14.04 (Trusty Tahr):**
 
 ```
-apt-get --no-install-recommends install lxc debootstrap cgroup-lite lxc-templates
+apt-get --no-install-recommends install lxc debootstrap cgroup-lite arping mercurial lxc-templates
 service lxc stop
 sed -i.orig -e 's,USE_LXC_BRIDGE="true",USE_LXC_BRIDGE="false",' /etc/default/lxc-net
 service lxc start
@@ -27,7 +27,7 @@ service lxc start
 **Debian 7 (Wheezy):**
 
 ```
-apt-get --no-install-recommends install lxc debootstrap
+apt-get --no-install-recommends install lxc debootstrap arping mercurial
 mkdir /cgroup
 echo "cgroup  /cgroup  cgroup  defaults  0  0" >> /etc/fstab
 mount /cgroup
@@ -40,7 +40,7 @@ See also https://github.com/simonvanderveldt/lxc-debian-wheezy-template
 **RHEL6:**
 
 ```
-yum install --enablerepo=epel lxc lxc-templates libcgroup debootstrap febootstrap
+yum install --enablerepo=epel lxc lxc-templates libcgroup debootstrap febootstrap arping mercurial
 chkconfig cgconfig on
 service cgconfig start
 ```
@@ -48,8 +48,8 @@ service cgconfig start
 # Install loader
 
 ```
-apt-get install --no-install-recommends mercurial
-cd /etc && hg clone https://bitbucket.org/evseev/lxc-loader
+cd /etc &&
+hg clone https://bitbucket.org/evseev/lxc-loader
 ```
 
 # On boot

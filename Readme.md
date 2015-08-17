@@ -48,7 +48,7 @@ service cgconfig start
 # Install loader
 
 ```
-apt-get install mercurial
+apt-get install --no-install-recommends mercurial
 cd /etc && hg clone http://code.google.com/p/lxc-loader/
 ```
 
@@ -61,7 +61,7 @@ Put to **/etc/rc.local**:
 
 # Create container
 
-  * **Ubuntu:** `lxc-create -n $NAME -t ubuntu -- -a i386 -r precise`
+  * **Ubuntu:** `lxc-create -n $NAME -t ubuntu -- -a i386 -r trusty`
   * **Debian:** `lxc-create -n $NAME -t debian-wheezy` (..select i386 in dialog window)
 
 ### Edit /var/lib/lxc/$NAME/config

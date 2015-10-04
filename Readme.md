@@ -74,6 +74,12 @@ lxc.network.name = eth0
 lxc.network.hwaddr = 00:16:3e:xx:xx:xx
 ```
 
+If your host is AppArmor-based (for example, Ubuntu 14.04) and guest is Systemd-based (for example, Ubuntu 15.10), then add following line (and dont forget to send my kiss to f*cking lennart):
+
+```
+lxc.aa_profile = unconfined
+```
+
 ### Edit /var/lib/lxc/$NAME/rootfs/etc/network/interfaces
 
 ```
